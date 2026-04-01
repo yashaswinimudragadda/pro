@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
+  <title>Frontend Mentor | News homepage</title>
+<style>
+  /* 1. Global Reset & Typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Dark Palette */
+  --soft-orange: hsl(35, 77%, 62%);
+  --soft-red: hsl(5, 85%, 63%);
+  --bg-dark: hsl(240, 100%, 5%);       /* Main Background */
+  --card-bg: hsl(240, 100%, 10%);      /* Slightly lighter for sidebar/cards */
+  --text-main: hsl(36, 100%, 99%);     /* Bright Text */
+  --text-muted: hsl(233, 8%, 79%);     /* Secondary Text */
+  --text-dim: hsl(236, 13%, 60%);      /* Dimmed Text */
+  --fs-body: 15px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--fs-body);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  padding: clamp(1rem, 5vw, 2rem);
+  overflow-x: hidden;
+}
+
+main {
+  max-width: 1110px;
+  margin: 0 auto;
+}
+
+/* 2. Navigation & Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: clamp(0.5rem, 5vw, 3.5rem);
+}
+
+#logo {
+  width: 150px;
+  height: auto;
+  
+}
+
+.menu-toggle, .menu-close {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* Flips dark icons to light */
+  filter: invert(1);
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: clamp(1rem, 2vw, 2.5rem);
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 700;
+  transition: color 0.3s;
+}
+
+nav ul li a:hover { color: var(--soft-red); }
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+
+.overlay.active { display: block; }
+
+/* 3. Hero Section */
+.hero {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.hero-main {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.img-hero img { 
+  width: 100%; 
+  display: block; 
+  border-radius: 4px;
+}
+
+.hero-heading-para {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.hero-heading {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-main);
+}
+
+.hero-para p {
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.hero-para a {
+  text-decoration: none;
+  background-color: var(--soft-red);
+  color: var(--bg-dark);
+  border: none;
+  padding: 1rem 2rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.hero-para a:hover { 
+  background-color: var(--text-main); 
+}
+
+/* 4. Sidebar */
+.hero-side {
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hero-side h1 { color: var(--soft-orange); font-size: 2.5rem; margin-bottom: 1rem; }
+
+.side-containers { padding: 1.5rem 0; }
+.side-containers h5 { font-size: 1.25rem; margin-bottom: 0.5rem; cursor: pointer; transition: 0.3s; }
+.side-containers h5:hover { color: var(--soft-orange); }
+.side-containers p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+hr { border: 0; border-top: 1px solid var(--text-dim); opacity: 0.2; }
+
+/* 5. Footer Blog Cards */
+.footer-blog {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Updated Card Styles with Thin Border */
+.card { 
+  display: flex; 
+  gap: 1.5rem; 
+  padding: 1rem; /* Added padding so text doesn't touch the border */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Thin, subtle border */
+  border-radius: 8px; /* Rounded corners for a modern look */
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hover effect to make cards feel interactive */
+.card:hover {
+  border-color: var(--soft-orange);
+  transform: translateY(-5px);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.card-img img {
+  width: 120px;
+  height: 250px;
+  object-fit: fill;
+  border-radius: 4px;
+}
+
+.card-heading-para span {
+  color: var(--soft-red);
+  font-size: 2rem;
+  font-weight: 700;
+  display: block;
+}
+
+.card-heading-para h1 a {
+  text-decoration: none;
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0.4rem 0;
+  transition: 0.3s;
+}
+
+.card-heading-para h1 a:hover { color: var(--soft-red); }
+.card-heading-para p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; }
+.project-showcase{
+  margin-top: 4rem;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 6. Video Showcase */
+.video-content-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 2rem;
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+.video-content-wrapper:hover{
+   border-color: var(--soft-orange);
+  transform: translateY(-5px);
+  background-color: rgba(255, 255, 255, 0.03);
+
+}
+
+.video-card { flex: 1; min-width: 300px; }
+.video-card video { 
+  width: 100%; 
+  border-radius: 8px; 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.project-info { flex: 1; min-width: 300px; }
+.project-info h2 { color: var(--soft-orange); margin-bottom: 10px; font-size:1.1rem ; }
+.project-info p{ color: var(--text-dim); line-height: 1.6; font-size: 0.9rem; }
+
+.github-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: var(--text-main);
+  color: var(--bg-dark);
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.github-btn:hover { background-color: var(--soft-orange); }
+
+/* 7. Mobile Responsiveness */
+@media (max-width: 850px) {
+  .menu-toggle { display: block; }
+  
+  nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    height: 100vh;
+    background-color: var(--bg-dark);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease-in-out;
+  }
+
+  nav.active { right: 0; }
+  .menu-close { display: block; }
+
+  nav ul { flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+  nav ul li a { color: var(--text-main); font-size: 1.1rem; }
+
+  .hero, .hero-heading-para, .footer-blog { grid-template-columns: 1fr; }
+  .hero-main { grid-column: span 1; }
+  .card { margin-bottom: 2rem;flex-direction: column; }
+  .card-img img{width: 250px;height: 250px;}
+  .video-card video{width:70%;}
+  .project-info{width: 100%;height: auto;}
+  
+}
+
+.attribution { 
+  margin-top: 4rem; 
+  text-align: center; 
+  font-size: 11px; 
+  padding: 2rem 0; 
+  color: var(--text-dim);
+}
+
+.attribution a { color: var(--soft-orange); }
+</style>
+</head>
+
+<body>
+  <div class="overlay" id="overlay"></div>
+
+  <main>
+    <header>
+      <img  id="logo" src="./assets/images/logo.png" alt="logo">
+
+      <button class="menu-toggle" aria-label="Open Menu" id="open-menu">
+        <img src="./assets/images/icon-menu.svg" alt="Open Menu">
+      </button>
+
+      <nav id="navbar">
+        <button class="menu-close" aria-label="Close Menu" id="close-menu">
+          <img src="./assets/images/icon-menu-close.svg" alt="Close Menu">
+        </button>
+        <ul>
+          
+          <li><a href="#project-showcase">Projects</a></li>
+          <li><a href="https://discordapp.com/users/yashaswinimudragadda" target="_blank">Discord</a></li>
+          <li><a href="https://github.com/yashaswinimudragadda/yashaswini-mudragadda"target="_blank">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/yashaswini-mudragadda-9180a9252/"target="_blank">LinkedIn</a></li>
+          <li><a href="mailto:mudragaddarajaniyashaswini@gmail.com" target="_blank">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <section class="hero-main">
+        <div class="img-hero">
+          <img src="./assets/images/hero.jpg" alt="img-hero">
+        </div>
+        <div class="hero-heading-para">
+          <div class="hero-heading">
+            <strong>Turning vision into value through purposeful development.</strong>
+          </div>
+          <div class="hero-para">
+            <p>I build the next evolution of the web, bridging frontend elegance with full-stack power to create platforms that truly serve the user.Crafting the web’s next evolution with a frontend-first mindset and full-stack precision to put powerful tech in every user's hands.</p>
+            <a href="https://github.com/yashaswinimudragadda/yashaswini-mudragadda/blob/main/Yashaswini_mudragadda.pdf" target="_blank">Check my cv</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="hero-side">
+        <h1>HANDS ON EXPERIENCE</h1>
+        <div class="side-containers">
+          <h5>Blue Planet Info Solutions</h5>
+          <p>Bridging UI design and team leadership by crafting cohesive web aesthetics and mentoring interns in modern Figma workflows.
+          </p>
+        </div>
+        <hr>
+        <div class="side-containers">
+          <h5>AITCE - DATA ANALYST INTERN</h5>
+          <p>...I specialized in mall performance metrics, transforming raw data into visual stories. My work with cross-functional teams focused on trend analysis and preprocessing, ensuring high-quality data supported every strategic business move.</p>
+        </div>
+        <hr>
+        <div class="side-containers">       
+          <h5>Agrownet</h5>
+          <p>Gained expertise in web content management and the technical workflows required to keep digital platforms running efficiently.</p>  
+        </div>
+      </section>
+    </section>
+<section class="footer-blog">
+  <div class="card">
+    <div class="card-img"><img src="./assets/images/repayment.jpg" alt="repayment calculator"></div>
+    <div class="card-heading-para">
+      <span>01</span>
+      <h1><a href="https://yashaswinimudragadda.github.io/Mortgage-repayment-calculator/" target="_blank">Mortgage Repayment</a></h1>
+      <p> A functional calculator featuring complex validation logic, dynamic "empty vs. completed" states, and a
+        mobile-first layout using CSS Flexbox.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-img"><img src="./assets/images/chart.jpg" alt="expenses chart"></div>
+    <div class="card-heading-para">
+      <span>02</span>
+      <h1><a href="https://yashaswinimudragadda.github.io/Expenses-chart-component/" target="_blank">Expenses chart </a></h1>
+      <p>
+        A dynamic dashboard using the Fetch API to render asynchronous data with real-time logic to highlight
+        current-day trends across all devices.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-img"><img src="./assets/images/age.jpg" alt="age calculator"></div>
+    <div class="card-heading-para">
+      <span>03</span>
+      <h1><a href="https://yashaswinimudragadda.github.io/age-calculator-app-main/" target="_blank">Age calculator</a></h1>
+      <p>
+        A precision tool implementing leap-year validation and real-time date math, built with a focus on responsive
+        design and seamless user input.
+      </p>
+    </div>
+  </div>
+</section>
+<section class="footer-blog">
+  <div class="card">
+    <div class="card-img"><img src="./assets/images/bento.jpg" alt="bento grid"></div>
+    <div class="card-heading-para">
+      <span>04</span>
+      <h1><a href="https://yashaswinimudragadda.github.io/betno-grid/" target="_blank">betno-grid</a></h1>
+<p>
+  Mastering complex layouts with CSS Grid and Flexbox to ensure seamless responsiveness and visual hierarchy across all device breakpoints.
+</p> target="_blank">    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-img"><img src="./assets/images/testmonial.jpg" alt="testimonials"></div>
+    <div class="card-heading-para">
+      <span>05</span>
+      <h1><a href="https://yashaswinimudragadda.github.io/Testimonials-grid-section/" target="_blank">Testimonial-grid</a></h1>
+      <p>
+  A high-impact layout designed to build user trust, featuring a responsive grid structure that adapts perfectly to various screen sizes.
+</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-img"><img src="./assets/images/columns.jpg "alt="3-column preview card"></div>
+    <div class="card-heading-para">
+      <span>06</span>
+      <h1><a href="https://yashaswinijavadeveloper.infinityfreeapp.com/3-column-preview-card-component-main/index.html" target="_blank">3-column-preview</a></h1>
+      <p>
+  A clean, mobile-first component using modern CSS to provide a balanced user experience and fluid transitions between desktop and mobile.
+</p>
+    </div>
+  </div>
+</section>
+<section class="project-showcase" id="project-showcase">
+  <div class="video-content-wrapper">
+    <div class="video-card">
+      <video controls>
+        <source src="./assets/videos/flyingimages.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="project-info">
+      <h2>FLYING IMAGES</h2>
+      <p>
+        An immersive visual experience using <strong>GSAP ScrollTrigger</strong> to create fluid, high-performance image animations. Perfect for dynamic product storytelling and modern landing pages.
+      </p>
+      <a href="https://github.com/yashaswinimudragadda/gsap_flying_images" class="github-btn" target="_blank">View on GitHub</a>
+    </div>
+  </div>
+
+  <div class="video-content-wrapper">
+    <div class="video-card">
+      <video controls>
+        <source src="./assets/videos/inventory.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="project-info">
+      <h2>INVENTORY MANAGEMENT</h2>
+      <p>
+        A robust Java application demonstrating core <strong>OOP principles</strong>. I implemented Encapsulation, Inheritance, and Polymorphism to manage stock data and streamline business logic efficiently.
+      </p>
+      <a href="https://github.com/yashaswinimudragadda/corejavaprograms/tree/main/Inventory%20Management%20System" class="github-btn" target="_blank">View on GitHub</a>
+    </div>
+  </div>
+
+  <div class="video-content-wrapper">
+    <div class="video-card">
+      <video controls>
+        <source src="./assets/videos/ums.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="project-info">
+      <h2>UNIVERSITY MANAGEMENT SYSTEM</h2>
+      <p>
+        A comprehensive system built with <strong>Java</strong> to handle student and faculty records. This project highlights my ability to structure complex data using clean, maintainable class hierarchies.
+      </p>
+      <a href="https://github.com/yashaswinimudragadda/corejavaprograms/tree/main/ums" class="github-btn" target="_blank">View on GitHub</a>
+    </div>
+  </div>
+
+  <div class="video-content-wrapper">
+    <div class="video-card">
+      <video controls>
+        <source src="./assets/videos/motion.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="project-info">
+      <h2>MOTION TRACKING</h2>
+      <p>
+        Exploring interactive web elements through <strong>GSAP motion design</strong>. This project focuses on UI responsiveness and creating smooth, user-centric transitions triggered by cursor movement.
+      </p>
+      <a href="https://github.com/yashaswinimudragadda/Motion_element_using_gsapanimation" class="github-btn" target="_blank">View on GitHub</a>
+    </div>
+  </div>
+
+  <div class="video-content-wrapper">
+    <div class="video-card">
+      <video controls>
+        <source src="./assets/videos/vendor.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="project-info">
+      <h2>VENDOR MANAGEMENT</h2>
+      <p>
+        A full-stack project bridging a Java-based backend with a functional frontend. It showcases end-to-end data flow and robust integration for managing vendor-client relationships.
+      </p>
+      <a href="https://github.com/yashaswinimudragadda/vendingmachine-java-project" class="github-btn" target="_blank">View on GitHub</a>
+    </div>
+  </div>
+
+  <div class="video-content-wrapper">
+    <div class="video-card">
+      <video controls>
+        <source src="./assets/videos/face.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="project-info">
+      <h2>VIDEO TRIGGERING</h2>
+      <p>
+        Advanced frontend techniques using <strong>Lottie animations</strong> and ScrollTrigger. This project syncs video playback with user scrolling to create a truly interactive cinematic web experience.
+      </p>
+      <a href="https://github.com/yashaswinimudragadda/gsap_scrolling-for-video-with-scrolltriggering" class="github-btn" target="_blank">View on GitHub</a>
+    </div>
+  </div>
+</section>
+<seciton class="to-hire-me">
+  <div class="video-content-wrapper">
+    <div class="project-info" style="text-align: center;">
+      <h2>LET'S BUILD SOMETHING AMAZING TOGETHER</h2>
+      <p>
+        I'm actively seeking new opportunities to contribute my frontend and full-stack skills. If you're looking for a passionate developer to bring your vision to life, let's connect!
+      </p>
+      <a href="mailto:yashaswinimudragadda@gmail.com" class="github-btn" target="_blank">Contact Me</a>
+    </div>
+  </div>
+</section>
+
+    
+  </main>
+
+  <footer class="attribution">
+  <div class="footer-links">
+    <a href="/index.html">Back to home page</a>
+  </div>
+  
+  <p>
+    &copy; 2026 Yashaswini Mudragadda. All Rights Reserved.
+  </p>
+  
+  <p class="credits">
+    Coded by <a href="mailto:mudragaddarajaniyashaswini@gmail.com">Yashaswini Mudragadda</a>
+  </p>
+</footer>
+
+  <script>
+    const openBtn = document.getElementById('open-menu');
+    const closeBtn = document.getElementById('close-menu');
+    const nav = document.getElementById('navbar');
+    const overlay = document.getElementById('overlay');
+
+    // Function to toggle menu
+    function toggleMenu() {
+      nav.classList.toggle('active');
+      overlay.classList.toggle('active');
+      
+      // Prevent scrolling when menu is open
+      if(nav.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    openBtn.addEventListener('click', toggleMenu);
+    closeBtn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+  </script>
+</body>
+</html>
